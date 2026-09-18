@@ -42,10 +42,7 @@ public class LibraryController {
         List<LibraryItemResponse> items = libraryService.getAllLibraryItems();
         return ResponseEntity.ok(items);
     }
-
-    /**
-     * Retrieve single library entry by unique identifier.
-     *
+    /*
      * @param id the library item ID
      * @return 200 OK with game details, or 404 Not Found
      */

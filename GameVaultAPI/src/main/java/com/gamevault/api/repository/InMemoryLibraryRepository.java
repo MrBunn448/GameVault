@@ -14,8 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Thread-safe in-memory implementation of LibraryRepository for Sprint 1 / PR1.
- * Matches teacher expectations for PR1 rapid verification before MySQL integration in PR2.
+ * in-memory implementation of LibraryRepository for Sprint 1 / PR1.
  */
 @Repository
 public class InMemoryLibraryRepository implements LibraryRepository {
