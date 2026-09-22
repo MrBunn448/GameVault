@@ -1,0 +1,13 @@
+{
+	"id": "e8d7c6b5-a4f3-2109-8765-43210fedcba9",
+	"name": "GameVault Local Environment",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment"
+}
