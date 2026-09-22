@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "a9b8c7d6-e5f4-4321-ba98-76543210fedc",
 		"name": "GameVault - Sprint 1 REST API Verification Suite",
-		"description": "Postman test suite for GameVault Sprint 1 / PR1 evaluation. Covers US-10 (View Library), US-09 (Add Game), and US-11 (Remove Game) with automated status code assertions, header verifications, and error handling checks.",
+		"description": "# GameVault – Sprint 1 REST API Live Demonstration Suite\n\nAutomated Postman test suite for GameVault Sprint 1 (PR1 evaluation). Covers US-10 (View Library), US-09 (Add Game), and US-11 (Remove Game) with automated status code assertions, header verifications, and error handling checks.\n\n### Teacher Live Demo Quick Guide:\n1. Ensure Spring Boot backend is running locally (`./gradlew bootRun` on port 8080) or in Docker (`docker run -p 8080:8080 ...`).\n2. Select the **'GameVault Local Environment'** from the top-right environment selector in Postman (baseUrl: `http://localhost:8080`).\n3. Click **'Run Collection'** to execute all 8 requests automatically (16/16 green tests in <2s).\n4. Walk through individual requests:\n   - **US-10:** `GET /api/library` shows 200 OK and seed data (*Hades*, *Elden Ring*, *Hollow Knight*).\n   - **US-09:** `POST /api/library` shows 201 Created and `Location` header.\n   - **Validation:** POST with blank title or missing status shows 400 Bad Request with structured field errors.\n   - **Not Found:** GET or DELETE on ID `999` shows 404 Not Found.\n   - **US-11:** `DELETE /api/library/:id` shows 204 No Content.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
