@@ -18,7 +18,6 @@ import java.util.List;
 @RequestMapping("/api/library")
 @CrossOrigin(origins = "*")
 public class LibraryController {
-//test
     private final LibraryService libraryService;
 
     public LibraryController(LibraryService libraryService) {
