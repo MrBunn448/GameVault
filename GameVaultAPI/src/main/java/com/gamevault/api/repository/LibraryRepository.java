@@ -1,21 +1,43 @@
 package com.gamevault.api.repository;
 
 import com.gamevault.api.model.LibraryItem;
+import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Data access abstraction for personal library entries.
- * Enforces the Dependency Inversion Principle (DIP).
- */
-public interface LibraryRepository {
+@Repository
+public class LibraryRepository {
 
-    List<LibraryItem> findAll();
+    private final List<LibraryItem> items = new ArrayList<>();
+    private final AtomicLong idSequence = new AtomicLong(1);
 
-    Optional<LibraryItem> findById(Long id);
+    public LibraryRepository() {
+        save(new LibraryItem(null, "Hades", "PLAYING"));
+        save(new LibraryItem(null, "Elden Ring", "COMPLETED"));
+        save(new LibraryItem(null, "Hollow Knight", "BACKLOG"));
+    }
 
-    LibraryItem save(LibraryItem item);
+    public List<LibraryItem> findAll() {
+        return new ArrayList<>(items);
+    }
 
-    boolean deleteById(Long id);
+    public Optional<LibraryItem> findById(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return items.stream()
+                .filter(item -> id.equals(item.getId()))
+                .findFirst();
+    }
+
+    public LibraryItem save(LibraryItem item) {
+        if (item.getId() == null) {
+            item.setId(idSequence.getAndIncrement());
+        }
+        items.add(item);
+        return item;
+    }
 }

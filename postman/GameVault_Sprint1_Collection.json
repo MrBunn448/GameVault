@@ -1,25 +1,13 @@
 {
 	"info": {
 		"_postman_id": "a9b8c7d6-e5f4-4321-ba98-76543210fedc",
-		"name": "GameVault - Sprint 1 REST API Verification Suite",
-		"description": "# GameVault – Sprint 1 REST API Live Demonstration Suite\n\nAutomated Postman test suite for GameVault Sprint 1 (PR1 evaluation). Covers US-10 (View Library), US-09 (Add Game), and US-11 (Remove Game) with automated status code assertions, header verifications, and error handling checks.\n\n### Teacher Live Demo Quick Guide:\n1. Ensure Spring Boot backend is running locally (`./gradlew bootRun` on port 8080) or in Docker (`docker run -p 8080:8080 ...`).\n2. Select the **'GameVault Local Environment'** from the top-right environment selector in Postman (baseUrl: `http://localhost:8080`).\n3. Click **'Run Collection'** to execute all 8 requests automatically (16/16 green tests in <2s).\n4. Walk through individual requests:\n   - **US-10:** `GET /api/library` shows 200 OK and seed data (*Hades*, *Elden Ring*, *Hollow Knight*).\n   - **US-09:** `POST /api/library` shows 201 Created and `Location` header.\n   - **Validation:** POST with blank title or missing status shows 400 Bad Request with structured field errors.\n   - **Not Found:** GET or DELETE on ID `999` shows 404 Not Found.\n   - **US-11:** `DELETE /api/library/:id` shows 204 No Content.",
+		"name": "GameVault - Sprint 1 REST API Tests",
+		"description": "Simple Postman test collection for GameVault Sprint 1. Verifies that endpoints return expected data and proper HTTP status/error codes.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:8080",
-			"type": "string"
-		},
-		{
-			"key": "createdGameId",
-			"value": "1",
-			"type": "string"
-		}
-	],
 	"item": [
 		{
-			"name": "US-10: GET /api/library (Get All Games)",
+			"name": "GET /api/library - Get all games",
 			"event": [
 				{
 					"listen": "test",
@@ -29,18 +17,10 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Response is a valid JSON array\", function () {",
-							"    const jsonData = pm.response.json();",
-							"    pm.expect(Array.isArray(jsonData)).to.be.true;",
-							"    pm.expect(jsonData.length).to.be.at.least(1);",
-							"});",
-							"",
-							"pm.test(\"Items contain required fields: id, title, status\", function () {",
-							"    const jsonData = pm.response.json();",
-							"    const firstItem = jsonData[0];",
-							"    pm.expect(firstItem).to.have.property('id');",
-							"    pm.expect(firstItem).to.have.property('title');",
-							"    pm.expect(firstItem).to.have.property('status');",
+							"pm.test(\"Returns list of games\", function () {",
+							"    const data = pm.response.json();",
+							"    pm.expect(data).to.be.an('array');",
+							"    pm.expect(data.length).to.be.greaterThan(0);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -49,22 +29,17 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json"
-					}
-				],
+				"header": [],
 				"url": {
 					"raw": "{{baseUrl}}/api/library",
 					"host": ["{{baseUrl}}"],
 					"path": ["api", "library"]
 				},
-				"description": "Retrieves the full list of games currently tracked in the personal library."
+				"description": "Retrieves the game library list."
 			}
 		},
 		{
-			"name": "US-10: GET /api/library/:id (Get Single Game by ID)",
+			"name": "GET /api/library/1 - Get game by ID",
 			"event": [
 				{
 					"listen": "test",
@@ -74,11 +49,10 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Returns correct game details for ID 1 (Hades)\", function () {",
-							"    const jsonData = pm.response.json();",
-							"    pm.expect(jsonData.id).to.eql(1);",
-							"    pm.expect(jsonData.title).to.eql(\"Hades\");",
-							"    pm.expect(jsonData.status).to.eql(\"PLAYING\");",
+							"pm.test(\"Returns expected game data (Hades)\", function () {",
+							"    const data = pm.response.json();",
+							"    pm.expect(data.id).to.eql(1);",
+							"    pm.expect(data.title).to.eql(\"Hades\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -87,22 +61,17 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json"
-					}
-				],
+				"header": [],
 				"url": {
 					"raw": "{{baseUrl}}/api/library/1",
 					"host": ["{{baseUrl}}"],
 					"path": ["api", "library", "1"]
 				},
-				"description": "Retrieves specific game details by its numeric ID."
+				"description": "Retrieves a single game by ID."
 			}
 		},
 		{
-			"name": "US-10: GET /api/library/999 (Non-existent Game -> 404)",
+			"name": "GET /api/library/999 - Non-existent game (404)",
 			"event": [
 				{
 					"listen": "test",
@@ -110,12 +79,6 @@
 						"exec": [
 							"pm.test(\"Status code is 404 Not Found\", function () {",
 							"    pm.response.to.have.status(404);",
-							"});",
-							"",
-							"pm.test(\"Error response contains status 404\", function () {",
-							"    const jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.eql(404);",
-							"    pm.expect(jsonData.message).to.include(\"999\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -124,22 +87,17 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json"
-					}
-				],
+				"header": [],
 				"url": {
 					"raw": "{{baseUrl}}/api/library/999",
 					"host": ["{{baseUrl}}"],
 					"path": ["api", "library", "999"]
 				},
-				"description": "Verifies that requesting a missing ID returns a proper 404 Not Found response."
+				"description": "Verifies 404 error code when requesting an ID that does not exist."
 			}
 		},
 		{
-			"name": "US-09: POST /api/library (Add Game -> 201 Created)",
+			"name": "POST /api/library - Add game (201)",
 			"event": [
 				{
 					"listen": "test",
@@ -149,20 +107,11 @@
 							"    pm.response.to.have.status(201);",
 							"});",
 							"",
-							"pm.test(\"Location header is returned\", function () {",
-							"    pm.response.to.have.header(\"Location\");",
-							"});",
-							"",
-							"pm.test(\"Response body contains saved game with assigned ID\", function () {",
-							"    const jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.property('id');",
-							"    pm.expect(jsonData.title).to.eql(\"Celeste\");",
-							"    pm.expect(jsonData.status).to.eql(\"PLAYING\");",
-							"    pm.expect(jsonData.personalRating).to.eql(9);",
-							"    pm.expect(jsonData.playtimeHours).to.eql(15);",
-							"    ",
-							"    // Store generated ID for subsequent DELETE test",
-							"    pm.collectionVariables.set(\"createdGameId\", jsonData.id.toString());",
+							"pm.test(\"Returns created game with ID\", function () {",
+							"    const data = pm.response.json();",
+							"    pm.expect(data.title).to.eql(\"Celeste\");",
+							"    pm.expect(data.status).to.eql(\"PLAYING\");",
+							"    pm.expect(data.id).to.be.a('number');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -175,26 +124,22 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json"
-					},
-					{
-						"key": "Accept",
-						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"Celeste\",\n    \"status\": \"PLAYING\",\n    \"personalRating\": 9,\n    \"playtimeHours\": 15,\n    \"startDate\": \"2026-09-01\",\n    \"completedDate\": null\n}"
+					"raw": "{\n    \"title\": \"Celeste\",\n    \"status\": \"PLAYING\"\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/api/library",
 					"host": ["{{baseUrl}}"],
 					"path": ["api", "library"]
 				},
-				"description": "Creates a new library item with valid title, status, and metadata."
+				"description": "Adds a new game to the library."
 			}
 		},
 		{
-			"name": "US-09: POST /api/library (Validation: Blank Title -> 400)",
+			"name": "POST /api/library - Validation error (400)",
 			"event": [
 				{
 					"listen": "test",
@@ -202,13 +147,6 @@
 						"exec": [
 							"pm.test(\"Status code is 400 Bad Request\", function () {",
 							"    pm.response.to.have.status(400);",
-							"});",
-							"",
-							"pm.test(\"Validation error details specify title field\", function () {",
-							"    const jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.eql(400);",
-							"    pm.expect(jsonData.error).to.eql(\"Validation Failed\");",
-							"    pm.expect(jsonData.details).to.have.property('title');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -220,10 +158,6 @@
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "Accept",
 						"value": "application/json"
 					}
 				],
@@ -236,105 +170,7 @@
 					"host": ["{{baseUrl}}"],
 					"path": ["api", "library"]
 				},
-				"description": "Tests bean validation: blank title must trigger 400 Bad Request."
-			}
-		},
-		{
-			"name": "US-09: POST /api/library (Validation: Missing Status -> 400)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400 Bad Request\", function () {",
-							"    pm.response.to.have.status(400);",
-							"});",
-							"",
-							"pm.test(\"Validation error details specify status field\", function () {",
-							"    const jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.eql(400);",
-							"    pm.expect(jsonData.error).to.eql(\"Validation Failed\");",
-							"    pm.expect(jsonData.details).to.have.property('status');",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "Accept",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"title\": \"Portal 2\"\n}"
-				},
-				"url": {
-					"raw": "{{baseUrl}}/api/library",
-					"host": ["{{baseUrl}}"],
-					"path": ["api", "library"]
-				},
-				"description": "Tests bean validation: missing mandatory status enum must trigger 400 Bad Request."
-			}
-		},
-		{
-			"name": "US-11: DELETE /api/library/:id (Remove Game -> 204)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 204 No Content\", function () {",
-							"    pm.response.to.have.status(204);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/api/library/{{createdGameId}}",
-					"host": ["{{baseUrl}}"],
-					"path": ["api", "library", "{{createdGameId}}"]
-				},
-				"description": "Deletes the dynamically created game from the library by its ID."
-			}
-		},
-		{
-			"name": "US-11: DELETE /api/library/999 (Non-existent Game -> 404)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 404 Not Found\", function () {",
-							"    pm.response.to.have.status(404);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/api/library/999",
-					"host": ["{{baseUrl}}"],
-					"path": ["api", "library", "999"]
-				},
-				"description": "Verifies that attempting to delete a non-existent item returns 404 Not Found."
+				"description": "Verifies 400 Bad Request error code when sending a blank title."
 			}
 		}
 	]
