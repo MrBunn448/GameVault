@@ -31,6 +31,7 @@ public class LibraryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LibraryItem> getById(@PathVariable Long id) {
+        //checks if exists (200 ok), else 404
         return libraryService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -38,6 +39,7 @@ public class LibraryController {
 
     @PostMapping
     public ResponseEntity<?> add(@RequestBody LibraryItem item) {
+        //checks if exists (200 ok), else 404
         if (item.getTitle() == null || item.getTitle().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Game title is required.");
         }

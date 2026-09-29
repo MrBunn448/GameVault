@@ -8,9 +8,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+//Hardcoded in memory db for testing
 @Repository
 public class LibraryRepository {
 
+    //returns the current number and increments the counter.
+    // If two requests try to get an ID at nearly the same time,
+    // AtomicLong makes sure they receive different numbers.
     private final List<LibraryItem> items = new ArrayList<>();
     private final AtomicLong idSequence = new AtomicLong(1);
 

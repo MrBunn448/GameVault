@@ -1,5 +1,6 @@
 package com.gamevault.api.model;
 
+//My super amazing library item model.
 public class LibraryItem {
 
     private Long id;

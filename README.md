@@ -49,6 +49,8 @@ cd GameVaultAPI
 
 Running inside Docker requires no host Java installation—the multi-stage `Dockerfile` compiles the JAR inside a JDK 25 builder image and packages it into a hardened, lightweight JRE 25 runtime image.
 
+For a detailed explanation of image building, running, health checks, logs, and cleanup, see [`GameVaultAPI/DOCKER.md`](GameVaultAPI/DOCKER.md).
+
 #### Prerequisites
 * Docker installed and daemon running (`docker --version`)
 
