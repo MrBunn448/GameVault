@@ -34,8 +34,8 @@ The final `.` means “use the current directory as the build context.” The `-
 
 The Dockerfile has two stages:
 
-1. A JDK 25 builder stage copies the Gradle wrapper, project configuration, and source code, then runs Gradle to create the Spring Boot executable JAR.
-2. A JRE 25 runtime stage copies only that JAR into a fresh image. It also installs `curl` for the health check and runs the API as a non-root `spring` user.
+1. A JDK 25 builder stage copies the project files and runs Gradle to create the Spring Boot executable JAR.
+2. A JRE 25 runtime stage copies only that JAR into a fresh image and runs the application.
 
 The Docker build runs `bootJar` with `-x test`, so it does not execute the test suite. Run tests separately before building when needed:
 
@@ -90,20 +90,12 @@ docker run -d --name gamevault-backend -p 8081:8080 gamevault-api:latest
 
 In this case, send requests to `http://localhost:8081`.
 
-## 4. Check status, health, and logs
+## 4. Check status and logs
 
 List running containers:
 
 ```bash
 docker ps
-```
-
-The `STATUS` column may show `healthy` or `starting` after the container has been running for a while. The Dockerfile health check calls `GET /api/library` inside the container every 30 seconds. It allows 20 seconds for startup, gives each check 5 seconds, and marks the container unhealthy after three consecutive failures.
-
-Inspect the health check result directly:
-
-```bash
-docker inspect --format='{{.State.Health.Status}}' gamevault-backend
 ```
 
 View application logs:
@@ -144,6 +136,6 @@ To remove the image as well, after removing its containers:
 docker rmi gamevault-api:latest
 ```
 
-## Data storage note
+## Notes
 
-The current repository stores games in an in-memory Java list, not a database or Docker volume. Data added through the API is lost when the application process stops. A newly started container creates a new application process and seeds the original sample games again. Docker alone does not make this in-memory data persistent.
+This simplified Docker setup is intentionally minimal so it is easy to understand and works reliably for a first project. It includes the basic two-stage build and runtime setup, but it does not include extra features like a health check, a non-root user, or curl installation. Those are useful production improvements, but they are not required just to run the application in Docker.
