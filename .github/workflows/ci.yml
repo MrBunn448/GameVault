@@ -19,17 +19,21 @@ jobs:
         working-directory: GameVaultAPI
 
     steps:
+      # Pull down git repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Set up Java JDK 25 environment
       - name: Set up Java JDK 25
         uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'temurin'
 
+      # Make sure gradlew has run permissions
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
+      # Compile code and run all JUnit test suites
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
