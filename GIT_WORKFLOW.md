@@ -23,7 +23,7 @@ main ─────────────────────────
 1. **Protected `main` Branch:** Code on `main` must always compile, pass all automated tests, and be deployable. Direct commits to `main` for new features are strictly avoided.
 2. **Short-Lived Branches:** Branches are created for specific user stories, tasks, or fixes, and merged quickly once acceptance criteria are met.
 3. **Automated Quality Gates:** Every Pull Request triggers the automated GitHub Actions CI pipeline (`./gradlew test`). A branch is only merged when the CI build is green.
-4. **Traceability (Agile Alignment):** Branch names and commit messages reference their corresponding User Story or Technical Task IDs from the project board.
+4. **Agile Alignment:** Branches reflect user stories or technical tasks as they are developed.
 
 ---
 
@@ -105,21 +105,7 @@ The following branches are established for the initial sprint:
 
 ---
 
-## 5. Commit Message Conventions
-
-Commit messages should be concise, written in the imperative mood, and prefixed with the issue ID where applicable:
-
-```text
-[US-10] Add LibraryController and GET /api/library endpoint
-[US-09] Validate request payload for POST /api/library
-[DEVOPS-01] Add multi-stage Dockerfile for backend build
-[CI-01] Configure GitHub Actions CI workflow for automated testing
-[QA-01] Add MockMvc tests for HTTP 200 and HTTP 400 responses
-```
-
----
-
-## 6. Portfolio Evidence Value (Fontys Rubric Alignment)
+## 5. Portfolio Evidence Value (Fontys Rubric Alignment)
 
 * **LO2 (Agile Development):** Demonstrates disciplined iterative delivery. Every Pull Request serves as concrete proof of traceable user story implementation.
 * **LO3 (Process Automation):** Shows that quality gates and automated CI pipelines are actively enforced before merging code into the main codebase.
