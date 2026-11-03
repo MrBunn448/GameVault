@@ -1,4 +1,4 @@
-name: Backend CI
+name: Backend CI/CD
 
 on:
   push:
@@ -41,3 +41,23 @@ jobs:
       # Compile code and run all JUnit test suites
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
+
+  deploy:
+    name: Continuous Deployment (Educloud)
+    needs: build
+    runs-on: self-hosted
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Backend & MySQL with Docker Compose
+        run: |
+          if docker compose version >/dev/null 2>&1; then
+            docker compose up -d --build
+            docker compose ps
+          else
+            docker-compose up -d --build
+            docker-compose ps
+          fi
