@@ -34,6 +34,10 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
+      # Static code analysis (Teacher Requirement: Back-end static code analysis)
+      - name: Run static code analysis (Checkstyle)
+        run: ./gradlew checkstyleMain checkstyleTest --no-daemon
+
       # Compile code and run all JUnit test suites
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
