@@ -53,7 +53,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy Backend & MySQL with Docker Compose
+        env:
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
         run: |
+          if [ -n "${STEAM_API_KEY}" ]; then
+            echo "STEAM_API_KEY=${STEAM_API_KEY}" > .env
+          fi
           if docker compose version >/dev/null 2>&1; then
             docker compose up -d --build
             docker compose ps
