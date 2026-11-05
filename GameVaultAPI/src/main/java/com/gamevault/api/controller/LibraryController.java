@@ -1,8 +1,10 @@
 package com.gamevault.api.controller;
 
+import com.gamevault.api.dto.CreateGameRequest;
 import com.gamevault.api.dto.steam.SteamImportRequest;
 import com.gamevault.api.model.LibraryItem;
 import com.gamevault.api.service.LibraryService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,13 @@ import java.util.List;
 // REST controller for game library endpoints
 @RestController
 @RequestMapping("/api/library")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+        "http://[2001:67c:6ec:7331:1c01:11ff:fe01:55f4]:3000"
+})
 public class LibraryController {
 
     private final LibraryService libraryService;
@@ -44,13 +52,22 @@ public class LibraryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // US-09: Add game manually
+    // US-09: Add game manually using DTO to prevent Mass Assignment vulnerability (Sonar rule java:S4684)
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody LibraryItem item) {
-        if (item.getTitle() == null || item.getTitle().trim().isEmpty()) {
+    public ResponseEntity<?> add(@Valid @RequestBody CreateGameRequest request) {
+        if (request == null || request.getTitle() == null || request.getTitle().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Game title is required.");
         }
-        item.setTitle(item.getTitle().trim());
+        LibraryItem item = new LibraryItem();
+        item.setTitle(request.getTitle().trim());
+        item.setStatus(request.getStatus() != null && !request.getStatus().trim().isEmpty()
+                ? request.getStatus().trim()
+                : "BACKLOG");
+        item.setPlaytimeMinutes(request.getPlaytimeMinutes() != null ? request.getPlaytimeMinutes() : 0);
+        item.setHeaderImageUrl(request.getHeaderImageUrl() != null && !request.getHeaderImageUrl().trim().isEmpty()
+                ? request.getHeaderImageUrl().trim()
+                : null);
+
         LibraryItem saved = libraryService.add(item);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
