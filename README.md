@@ -91,17 +91,46 @@ Expected response: HTTP 200 with initial seeded games (*Hades*, *Elden Ring*, *H
 
 ---
 
-## 5. Automated Testing
+## 5. Automated Testing & Static Code Analysis (LO4)
 
-Run the automated test suite natively:
+All testing and quality gates can be executed locally before pushing to CI/CD:
+
 ```bash
 cd GameVaultAPI
-./gradlew test
 ```
 
-Or run Postman / Newman integration tests:
+### 1. Static Code Analysis with Checkstyle
+Validates Java syntax, formatting, clean imports, and naming standards against `config/checkstyle/checkstyle.xml`:
 ```bash
-npx newman run ../../Documentation/Postman/GameVault_Sprint1_Collection.json --environment ../../Documentation/Postman/GameVault_Sprint1_Environment.json
+./gradlew checkstyleMain checkstyleTest
+```
+* HTML report: `build/reports/checkstyle/main.html`
+
+### 2. Unit & Integration Tests (JUnit 5, Mockito & MockMvc)
+Executes isolated service unit tests and Spring Boot full-slice integration tests ("from repository to valid JSON"):
+```bash
+./gradlew test
+```
+* HTML report: `build/reports/tests/test/index.html`
+
+### 3. JaCoCo Test Coverage Report
+Generates branch and line test coverage data:
+```bash
+./gradlew jacocoTestReport
+```
+* Open in browser: `build/reports/jacoco/test/html/index.html`
+* XML report for Sonar: `build/reports/jacoco/test/jacocoTestReport.xml`
+
+### 4. SonarCloud Static Code Analysis
+Performs deep semantic analysis, vulnerability scanning, code smell checks, and Quality Gate evaluation:
+```bash
+./gradlew sonar -Dsonar.token=<YOUR_SONAR_TOKEN>
+```
+* Cloud Dashboard: [https://sonarcloud.io/dashboard?id=MrBunn448_GameVault](https://sonarcloud.io/dashboard?id=MrBunn448_GameVault)
+
+### 5. Run Everything in One Command:
+```bash
+./gradlew checkstyleMain checkstyleTest test jacocoTestReport
 ```
 
 ---
