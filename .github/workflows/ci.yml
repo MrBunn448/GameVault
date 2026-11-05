@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -51,10 +52,13 @@ jobs:
         run: ./gradlew sonar --no-daemon
 
   deploy:
-    name: Continuous Deployment (Educloud)
+    name: Continuous Delivery (Educloud Production)
     needs: build
     runs-on: self-hosted
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: production
+      url: http://[2001:67c:6ec:7331:1c01:11ff:fe01:55f4]:8080/api/library
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout repository
