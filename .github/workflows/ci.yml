@@ -34,13 +34,21 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
-      # Static code analysis (Teacher Requirement: Back-end static code analysis)
+      # Static code analysis (Teacher Requirement: Sonar & Checkstyle)
       - name: Run static code analysis (Checkstyle)
         run: ./gradlew checkstyleMain checkstyleTest --no-daemon
 
-      # Compile code and run all JUnit test suites
-      - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+      # Compile code, run all JUnit unit and integration test suites, and generate JaCoCo coverage
+      - name: Build with Gradle and run tests
+        run: ./gradlew build jacocoTestReport --no-daemon
+
+      # Static code analysis with Sonar (Teacher Requirement)
+      - name: Sonar Static Code Analysis
+        if: ${{ env.SONAR_TOKEN != '' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew sonar --no-daemon
 
   deploy:
     name: Continuous Deployment (Educloud)

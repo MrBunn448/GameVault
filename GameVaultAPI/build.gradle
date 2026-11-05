@@ -3,6 +3,8 @@ plugins {
     id 'org.springframework.boot' version '4.1.1'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'checkstyle'
+    id 'jacoco'
+    id 'org.sonarqube' version '7.5.0.8588'
 }
 
 group = 'com.gamevault'
@@ -38,4 +40,25 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy tasks.named('jacocoTestReport')
+}
+
+jacocoTestReport {
+    dependsOn tasks.named('test')
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "MrBunn448_GameVault"
+        property "sonar.projectName", "GameVaultAPI"
+        property "sonar.organization", "mrbunn448"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.exclusions", "**/model/**,**/dto/**,**/GameVaultApiApplication.java"
+    }
 }

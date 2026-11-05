@@ -65,7 +65,7 @@ public class LibraryController {
         return ResponseEntity.notFound().build();
     }
 
-    // Clear all games from database (temporary utility / full reset)
+    // Clear all games from database (temporary?)
     @DeleteMapping
     public ResponseEntity<Void> deleteAll() {
         libraryService.deleteAll();
