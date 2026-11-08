@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-// JPA entity representing a game entry in the user's library
+// Defines database table for ORM
 @Entity
 @Table(name = "library_items")
 public class LibraryItem {

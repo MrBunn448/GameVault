@@ -6,10 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-// Spring Data JPA repository for library persistence in MySQL
 @Repository
 public interface LibraryRepository extends JpaRepository<LibraryItem, Long> {
+    // This tells Spring Data JPA that the repository stores LibraryItem entities whose IDs are Longs.
+    // Spring provides common methods such as findAll, findById etc.
 
-    // Helper to check if a Steam game is already saved in the library
+    //  check if a Steam game is already saved in the library
     Optional<LibraryItem> findBySteamAppId(Long steamAppId);
 }

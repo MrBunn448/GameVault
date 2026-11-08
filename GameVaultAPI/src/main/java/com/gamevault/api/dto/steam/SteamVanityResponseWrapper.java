@@ -18,7 +18,7 @@ public class SteamVanityResponseWrapper {
         this.response = response;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonIgnoreProperties(ignoreUnknown = true) //if there are unknown fields, ignore them
     public static class VanityContainer {
         @JsonProperty("steamid")
         private String steamId;

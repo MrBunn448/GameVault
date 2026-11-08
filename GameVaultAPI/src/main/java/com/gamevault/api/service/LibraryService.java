@@ -70,24 +70,28 @@ public class LibraryService {
                 continue; // Skip nameless entries
             }
 
-            // Check if game already exists in library to avoid duplicate records
+            // Steam App IDs identify games, so use one to decide whether to create or update a library row.
             Optional<LibraryItem> existing = repository.findBySteamAppId(steamGame.getAppId());
 
             LibraryItem item;
             if (existing.isPresent()) {
+                // Reuse the saved row so its database ID, title, and the user's status are preserved.
                 item = existing.get();
+                // Steam is the source of truth for playtime, so refresh it on every import.
                 item.setPlaytimeMinutes(steamGame.getPlaytimeForever());
+                // Keep a saved image URL; only fill it from Steam-derived data when it is missing.
                 if (item.getHeaderImageUrl() == null) {
                     item.setHeaderImageUrl(steamGame.getHeaderImageUrl());
                 }
             } else {
+                // This App ID is not in the library yet, so create a new database entity from Steam's data.
                 item = new LibraryItem();
                 item.setTitle(steamGame.getName().trim());
                 item.setSteamAppId(steamGame.getAppId());
                 item.setPlaytimeMinutes(steamGame.getPlaytimeForever());
                 item.setHeaderImageUrl(steamGame.getHeaderImageUrl());
 
-                // Set initial status based on playtime
+                // Give new entries a useful initial status; existing user-selected statuses are left unchanged.
                 if (steamGame.getPlaytimeForever() != null && steamGame.getPlaytimeForever() > 0) {
                     item.setStatus("PLAYING");
                 } else {
@@ -95,6 +99,7 @@ public class LibraryService {
                 }
             }
 
+            // save inserts new entities or updates existing ones; collect the saved result for the HTTP response.
             savedItems.add(repository.save(item));
         }
 

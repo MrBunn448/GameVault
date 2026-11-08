@@ -20,9 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-// REST controller for game library endpoints
 @RestController
-@RequestMapping("/api/library")
+@RequestMapping("/api/library") //base url
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "http://localhost:3000",
@@ -52,9 +51,9 @@ public class LibraryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // US-09: Add game manually using DTO to prevent Mass Assignment vulnerability (Sonar rule java:S4684)
+    // US-09: Add game manually using DTO to prevent Mass Assignment vulnerability (Sonar rule thingy 'java:S4684')
     @PostMapping
-    public ResponseEntity<?> add(@Valid @RequestBody CreateGameRequest request) {
+    public ResponseEntity<?> add(@Valid @RequestBody CreateGameRequest request) { //@valid checks DTO
         if (request == null || request.getTitle() == null || request.getTitle().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Game title is required.");
         }
@@ -89,13 +88,15 @@ public class LibraryController {
         return ResponseEntity.noContent().build();
     }
 
-    // US-09 / US-08: Import owned games from Steam Web API (handles JSON body from frontend)
+    // Accepts a JSON body containing either a numeric Steam ID or a Steam profile URL in its steamId field.
+    // This mapping is for the request-body format. the shared import logic resolves profile URLs if needed.
     @PostMapping(value = "/steam/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> importFromSteamJson(@RequestBody SteamImportRequest request) {
         return executeSteamImport(request != null ? request.getSteamId() : null);
     }
 
-    // US-09 / US-08: Import owned games from Steam Web API (handles query param fallback)
+    // Accepts the same numeric Steam ID or Steam profile URL as a query parameter instead of a JSON body.
+    // This is an alternate request forma. both mappings use the same Steam import logic.
     @PostMapping(value = "/steam/import")
     public ResponseEntity<?> importFromSteamParam(@RequestParam(required = false) String steamId) {
         return executeSteamImport(steamId);

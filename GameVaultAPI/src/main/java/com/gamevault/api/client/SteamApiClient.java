@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 // Client communicating directly with Valve's Steamworks Web API
-@Component
+@Component // defines this for spring to inject into other classes
 public class SteamApiClient {
 
     private final RestClient restClient;
@@ -27,7 +27,8 @@ public class SteamApiClient {
         this.baseUrl = baseUrl != null ? baseUrl.trim() : "https://api.steampowered.com";
     }
 
-    // Fetches owned games list for a given Steam ID (accepts 64-bit ID, custom vanity URL, or full profile link)
+    // Fetches owned games using either a numeric Steam ID or a Steam profile URL.
+    // Profile URLs may contain a numeric ID (/profiles/...) or a custom name (/id/...).
     public List<SteamGameDto> getOwnedGames(String rawInput) {
         if (apiKey.isEmpty()) {
             throw new IllegalStateException("Steam API key is not set. Please configure the STEAM_API_KEY environment variable.");
@@ -64,7 +65,8 @@ public class SteamApiClient {
         }
     }
 
-    // Resolves raw input (numeric ID, profile link, or custom URL name) to a 64-bit Steam ID
+    // Normalizes either a numeric Steam ID or a profile URL into the numeric ID Steam's games endpoint expects.
+    // For custom /id/ profile URLs, it asks Steam to resolve the profile name first.
     private String resolveTo64BitSteamId(String input) {
         String cleaned = input.trim();
 
