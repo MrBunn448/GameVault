@@ -39,11 +39,17 @@ class LibraryControllerTest {
                 new LibraryItem(2L, "Elden Ring", "COMPLETED")
         ));
 
-        mockMvc.perform(get("/api/library"))
+        // Test standard REST pluralized endpoint
+        mockMvc.perform(get("/api/libraries"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].title", is("Hades")))
                 .andExpect(jsonPath("$[1].title", is("Elden Ring")));
+
+        // Test backward-compatible singular endpoint
+        mockMvc.perform(get("/api/library"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @Test

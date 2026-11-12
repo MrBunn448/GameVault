@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,15 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST controller for GameVault library management.
+ * Primary route follows REST resource pluralization standards (/api/libraries),
+ * while retaining /api/library for backward compatibility.
+ *
+ * Note on CORS: CrossOrigin annotations are intentionally omitted because GameVault
+ * is deployed behind an Nginx reverse proxy (and Vite dev proxy locally), ensuring
+ * all browser-to-backend traffic is strictly same-origin.
+ */
 @RestController
-@RequestMapping("/api/library") //base url
-@CrossOrigin(origins = {
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:3000",
-        "http://[2001:67c:6ec:7331:1c01:11ff:fe01:55f4]:3000"
-})
+@RequestMapping({"/api/libraries", "/api/library"})
 public class LibraryController {
 
     private final LibraryService libraryService;
@@ -96,7 +97,7 @@ public class LibraryController {
     }
 
     // Accepts the same numeric Steam ID or Steam profile URL as a query parameter instead of a JSON body.
-    // This is an alternate request forma. both mappings use the same Steam import logic.
+    // This is an alternate request format. both mappings use the same Steam import logic.
     @PostMapping(value = "/steam/import")
     public ResponseEntity<?> importFromSteamParam(@RequestParam(required = false) String steamId) {
         return executeSteamImport(steamId);

@@ -4,10 +4,10 @@ services:
     container_name: gamevault-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: gamevault
-      MYSQL_USER: gamevault
-      MYSQL_PASSWORD: gamevaultpassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-gamevault}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -30,9 +30,9 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 3306
-      DB_NAME: gamevault
-      DB_USER: gamevault
-      DB_PASSWORD: gamevaultpassword
+      DB_NAME: ${DB_NAME:-gamevault}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
       STEAM_API_KEY: ${STEAM_API_KEY:-}
     ports:
       - "8080:8080"
